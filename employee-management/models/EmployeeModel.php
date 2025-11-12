@@ -104,5 +104,52 @@ class EmployeeModel {
         $stmt = $this->conn->prepare($query);
         return $stmt->execute();
     }
+    public function getSalaryStats() {
+        $query = "
+            SELECT 
+                department,
+                ROUND(AVG(salary)) AS avg_salary,
+                MAX(salary) AS max_salary,
+                MIN(salary) AS min_salary
+            FROM " . $this->table_name . "
+            GROUP BY department
+            ORDER BY department
+        ";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+    public function getTenureStats() {
+    $query = "
+        SELECT
+            department,
+            COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(hire_date)) < 1 THEN 1 END) AS junior,
+            COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(hire_date)) BETWEEN 1 AND 3 THEN 1 END) AS middle,
+            COUNT(CASE WHEN EXTRACT(YEAR FROM AGE(hire_date)) > 3 THEN 1 END) AS senior,
+            ROUND(AVG(EXTRACT(YEAR FROM AGE(hire_date))), 1) AS avg_years_service,
+            MAX(EXTRACT(YEAR FROM AGE(hire_date))) AS max_years_service,
+            MIN(EXTRACT(YEAR FROM AGE(hire_date))) AS min_years_service
+        FROM employees
+        GROUP BY department
+        ORDER BY department
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt;
+}
+
+    // METHOD 12: Ringkasan Karyawan (COUNT, SUM, AVG)
+    public function getEmployeeOverview() {
+    $query = "
+        SELECT
+            COUNT(*) AS total_employees,
+            SUM(salary) AS total_salary,
+            ROUND(AVG(EXTRACT(YEAR FROM AGE(hire_date))), 1) AS avg_years_service
+        FROM employees
+    ";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt;
+}
 }
 ?>

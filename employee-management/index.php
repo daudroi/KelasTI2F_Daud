@@ -86,6 +86,21 @@ switch ($action) {
         include 'views/department_stats.php';
         break;
 
+    case 'salary_stats':
+        $stats = $employeeModel->getSalaryStats();
+        include 'views/salary_stats.php';
+        break;
+
+    case 'tenure_stats':
+        $stats = $employeeModel->getTenureStats();
+        include 'views/tenure_stats.php';
+        break;
+
+    case 'employee_overview':
+    $stats = $employeeModel->getEmployeeOverview(); 
+    include 'views/employee_overview.php';
+    break;
+
     case 'refresh':
         $employeeModel->refreshDashboard();
         header("Location: index.php?action=dashboard&message=refreshed");
